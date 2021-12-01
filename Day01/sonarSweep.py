@@ -14,13 +14,23 @@ def countIncrease(depth):
         previous = int(measurement)
     return count
             
+def windowSums(depth):
+    windows = []
+    for i in range(len(depth)-2):
+        sum = int(depth[i]) + int(depth[i+1]) + int(depth[i+2])
+        windows.append(sum)
+    return windows
 
 def main():
     #with urllib.request.urlopen('https://adventofcode.com/2021/day/1/input') as f:
     measurements = []
     with open('depth.txt') as f:
         measurements = f.readlines()
-    print(countIncrease(measurements))
+    windows = windowSums(measurements)
+    #print("dir = {}".format(dir(windows)))
+    #print("type = {}".format(type(windows)))
+    print("[!] individual increases:/t {}".format(countIncrease(measurements)))
+    print("[!] window increases:/t {}".format(countIncrease(windows)))
 
 if __name__ == "__main__":
     main()
