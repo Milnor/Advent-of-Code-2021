@@ -19,6 +19,23 @@ def calculate_position(moves):
 
     return x, y
 
+def aim_position(moves):
+    """ Calculate x,y position based on movement input """
+    x = 0
+    y = 0
+    aim = 0
+    for line in moves:
+        if line.startswith("forward"):
+            x += int(line[-2])
+            y += aim * int(line[-2])
+        elif line.startswith("up"):
+            aim -= int(line[-2])
+        elif line.startswith("down"):
+            aim += int(line[-2])
+        else:
+            sys.stderr.write("[-] bad movement input: {}\n".format(line))
+
+    return x, y
 
 def main():
     """ Parse data and display results of Day 1 Challenges """
@@ -26,11 +43,17 @@ def main():
     with open('../../data/02movement.txt') as data_file:
         movements = data_file.readlines()
 
+    print("===Simple Calculation=================")
     horiz, depth = calculate_position(movements)
     print("[!] horizontal position:\t{}\n".format(horiz))
     print("[!] depth:\t\t\t{}\n".format(depth))
-    print("[!] result:\t\t\t{}\n".format(horiz * depth))
+    print("[!] result:\t\t\t{}\n\n".format(horiz * depth))
 
+    print("===Aim Calculation====================")
+    horiz, depth = aim_position(movements)
+    print("[!] horizontal position:\t{}\n".format(horiz))
+    print("[!] depth:\t\t\t{}\n".format(depth))
+    print("[!] result:\t\t\t{}\n\n".format(horiz * depth))
 
 if __name__ == "__main__":
     main()
