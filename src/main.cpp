@@ -31,6 +31,8 @@ class Submarine {
  * D2P2 = 2199 * 802965 = 1765720035
  */
 
+const int bit_count = 12;
+
 struct Submarine {
     int x = 0;
     int y = 0;
@@ -43,7 +45,33 @@ struct Submarine {
 
 string calculate_gamma(vector<string> raw_bits)
 {
+    int zeroes[bit_count] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int ones[bit_count] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
     cout << "vector size=" << raw_bits.size() << "\n";
+
+    for (int i = 0; i < raw_bits.size(); i++) {
+
+        for (int j = 0; j < bit_count; j++) {
+            
+            if (raw_bits[i][j] == '0') {
+                zeroes[j]++;
+            } else if (raw_bits[i][j] == '1') {
+                ones[j]++;
+            } else if (raw_bits[i][j] == '\n') {
+                // pass
+            } else {
+                cout << "[!] did not expect " << raw_bits[i][j] << "!\n";
+            }
+
+        }
+
+    }
+
+    for (int i = 0; i < bit_count; i++) {
+        cout << "0s= " << zeroes[i] << ", 1s= " << ones[i] << "\n";
+    }
+
     return "hi";
 }
 
