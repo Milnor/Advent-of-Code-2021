@@ -14,6 +14,14 @@ class Submarine {
 };
 */
 
+/* Correct answers from Python version:
+ *
+ * D1P1 = 1482
+ * D1P2 = 1518
+ * D2P1 = 2199 * 786 = 1728414
+ * D2P2 = 2199 * 802965 = 1765720035
+ */
+
 struct Submarine {
     int x = 0;
     int y = 0;
