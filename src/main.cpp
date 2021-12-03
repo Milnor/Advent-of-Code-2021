@@ -2,8 +2,17 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
+
+/* Data Sets
+ *
+ * https://adventofcode.com/2021/day/1/input
+ * https://adventofcode.com/2021/day/2/input
+ * https://adventofcode.com/2021/day/3/input
+ *
+ */
 
 /*
 class Submarine {
@@ -32,6 +41,25 @@ struct Submarine {
     }
 };
 
+string calculate_gamma(vector<string> raw_bits)
+{
+    cout << "vector size=" << raw_bits.size() << "\n";
+    return "hi";
+}
+
+vector<string> get_challenge_data(string filepath) {
+    vector <string> daily_input;
+    cout << "reading " << filepath << "...\n";
+    fstream challenge;
+    challenge.open(filepath, ios::in);
+    string current_line;
+    while(getline(challenge, current_line)) {
+        daily_input.push_back(current_line);
+    }
+    challenge.close();
+    return daily_input;
+}
+
 int main() {
 
     fstream challenge;
@@ -56,6 +84,9 @@ int main() {
     challenge.close();
 
     cout << "Day 1 Challenge 1=" << count << "\n";
+
+    vector<string> day03 = get_challenge_data("./data/03binary.txt");
+    calculate_gamma(day03);
 
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
