@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <ctype.h>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -203,6 +204,118 @@ int calculate_co2(vector<string> data) {
     return stoi(subvector[0], 0, 2);
 }
 
+struct game_board {
+    int board[5][5];
+    bool state[5][5];
+};
+
+class Bingo {
+    public:
+        Bingo(vector<string> raw_data) {
+            cout << "[+] Game created!\n";
+            numbers = parseNumbers(raw_data[0]);
+            for (auto num : numbers)
+            {
+                cout << "num = " << num << "\n";
+            }
+            //cout << "nums = " << numbers << "\n";
+            vector<string> subvector = {raw_data.begin() + 1, raw_data.end()};
+            players = parsePlayers(subvector);
+
+        }
+        int getNumbers(void);
+        int getPlayers(void);
+    private:
+        vector<int> numbers;
+        vector<game_board> players;  
+        vector<int> parseNumbers(string data);
+        vector<int> parseBoards(vector<string> data);
+        vector<game_board> parsePlayers(vector<string> data);     
+    
+
+};
+
+// Member functions of Bingo
+int Bingo::getNumbers(void) {
+    return numbers.size();
+}
+
+int Bingo::getPlayers(void) {
+    return players.size();
+}
+
+vector<int> Bingo::parseNumbers(string data) {
+    vector<int> game_data;
+    string number = "";
+    for (auto digit : data) {
+        if (isdigit(digit)) {
+            cout << digit << " is a digit\n";
+            number.push_back(digit);
+        } else {
+            cout << "pushing " << number << "\n";
+            game_data.push_back(stoi(number, nullptr, 10));
+            number.clear();
+
+        }
+
+    }
+
+    if (number.size() > 0) {
+        game_data.push_back(stoi(number, 0, 10));
+        cout << "pushing " << number << "\n";
+    }
+
+    return game_data;
+}
+
+vector<int> Bingo::parseBoards(vector<string> data) {
+    cout << "\n\n==parseBoards====\n\n";
+    vector<int> num_list;
+    string number = "";
+    for (auto line : data) {
+        //string number = "";
+        for (auto digit : line) {
+            if (isdigit(digit)) {
+                cout << digit << " is also a digit\n";
+                number.push_back(digit);
+            } else {
+                if (number.size() > 0) {
+                    cout << "\talso pushing " << number << "\n";
+                    num_list.push_back(stoi(number, 0, 10));
+                    number.clear();
+                }
+            }
+
+        }
+
+            if (number.size() > 0) {
+                cout << "\talso pushing " << number << " EOL\n";
+                num_list.push_back(stoi(number, 0, 10));
+                number.clear();
+            }
+    }
+        if (number.size() > 0) {
+            cout << "\talso pushing " << number << "\n";
+            num_list.push_back(stoi(number, 0, 10));
+        }
+
+    cout << "numbers going into boards = " << num_list.size() << "\n";
+
+    return num_list; 
+} 
+
+vector<game_board> Bingo::parsePlayers(vector<string> data) {
+    vector<int> all_boards = parseBoards(data);
+    if ((all_boards.size() % 25) != 0)
+    {
+        cerr << "[!]" << all_boards.size() << "won't fit 5x5 boards evenly!\n";
+    }
+    game_board dummy;
+    vector<game_board> dummyvec;
+    dummyvec.push_back(dummy);
+    return dummyvec;
+}
+
 int main() {
 
     fstream challenge;
@@ -244,6 +357,12 @@ int main() {
     cout << "\toxygen = " << oxygen_gen << "\n\tCO2 = " << co2_scrub << "\n\tlife support = " << life_support << "\n"; 
 
 
+    vector<string> bingo = get_challenge_data("./data/04sample.txt");
+    cout << "line 1: " << bingo[0] << "\nline 2: " << bingo[1] << "\nline 3: " << bingo[2] << "\nline 4:" << bingo[3] << "\n";
+
+    Bingo game = Bingo(bingo);
+    cout << "players = " << game.getPlayers() << "\n";
+    cout << "numbers = " << game.getNumbers() << "\n";
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
     //yellow.y = 0;
