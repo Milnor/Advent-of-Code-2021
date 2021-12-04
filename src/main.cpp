@@ -68,11 +68,30 @@ string calculate_gamma(vector<string> raw_bits)
 
     }
 
+    string gamma = "";
+
     for (int i = 0; i < bit_count; i++) {
-        cout << "0s= " << zeroes[i] << ", 1s= " << ones[i] << "\n";
+        if (zeroes[i] > ones[i]) {
+            gamma.append("0");
+        } else {
+            gamma.append("1");
+        }
+        //cout << "0s= " << zeroes[i] << ", 1s= " << ones[i] << "\n";
     }
 
-    return "hi";
+    return gamma;
+}
+
+string gamma_to_epsilon(string gamma) {
+    string epsilon = "";
+    for (int i = 0; i < bit_count; i++) {
+        if (gamma[i] == '1') {
+            epsilon.append("0");
+        } else {
+            epsilon.append("1");
+        }
+    }  
+    return epsilon;
 }
 
 vector<string> get_challenge_data(string filepath) {
@@ -86,6 +105,102 @@ vector<string> get_challenge_data(string filepath) {
     }
     challenge.close();
     return daily_input;
+}
+
+int minority_is_zero(vector<string> data, int pos)
+{
+    int zeroes = 0;
+    int ones = 0;
+    int ret = 1;
+
+    for (string s: data) {
+        if (s[pos] == '0') {
+            zeroes++;
+        } else if (s[pos] == '1') {
+            ones++;
+        }
+    }
+
+    if (ones < zeroes) 
+    {
+        ret = 0;
+    }
+
+    return ret;
+}
+
+int majority_is_one(vector<string> data, int pos)
+{
+    int zeroes = 0;
+    int ones = 0;
+    int ret = 1;
+
+    for(string s : data) {
+        if (s[pos] == '0') {
+            zeroes++;
+        } else if (s[pos] == '1') {
+            ones++;
+        }
+    }
+
+    if (ones < zeroes)
+    {
+        // tie goes to 1's
+        ret = 0;
+    }
+    
+    return ret;
+    
+}
+
+vector<string> keep_matches(vector<string> data, int bit_pos, int val) {
+    vector<string> subvector;
+    char match;
+    if (val == 0) {
+        match = '0';
+    } else {
+        match = '1';
+    }
+    for (string s: data) {
+        if (s[bit_pos] == match) {
+            subvector.push_back(s);
+        } 
+    }
+    return subvector;
+}
+
+int calculate_oxygen(vector<string> data) {
+    // majority, 1 for tie-breaker
+    vector<string> subvector(data);
+    int bit_pos = 0;
+    do {
+        if (majority_is_one(subvector, bit_pos)) {
+            // strip appropriate values
+            subvector = keep_matches(subvector, bit_pos, 1);
+        } else {
+            // strip the others
+            subvector = keep_matches(subvector, bit_pos, 0);
+        }
+        bit_pos++;
+    } while (subvector.size() > 1);
+
+    return stoi(subvector[0], 0, 2);
+}
+
+int calculate_co2(vector<string> data) {
+    // minority, 0 for tie-breaker
+    vector<string> subvector(data);
+    int bit_pos = 0;
+    do {
+        if (minority_is_zero(subvector, bit_pos)) {
+            subvector = keep_matches(subvector, bit_pos, 0);
+        } else {
+            subvector = keep_matches(subvector, bit_pos, 1);
+        }
+        bit_pos++;
+    } while (subvector.size() > 1);
+
+    return stoi(subvector[0], 0, 2);
 }
 
 int main() {
@@ -114,7 +229,20 @@ int main() {
     cout << "Day 1 Challenge 1=" << count << "\n";
 
     vector<string> day03 = get_challenge_data("./data/03binary.txt");
-    calculate_gamma(day03);
+    string gamma = calculate_gamma(day03);
+    string epsilon = gamma_to_epsilon(gamma);
+    int power = stoi(gamma, 0, 2) * stoi(epsilon, 0, 2);
+    
+    cout << "Day 3:\n" << "\tgamma = " << gamma << "\n\tepsilon = " << epsilon << "\n\tpower = " << power << "\n";
+
+    int oxygen_gen = calculate_oxygen(day03);
+    cout << "Did we get halfway before seg fault?\n";
+    int co2_scrub = calculate_co2(day03);
+
+    int life_support = oxygen_gen * co2_scrub;
+
+    cout << "\toxygen = " << oxygen_gen << "\n\tCO2 = " << co2_scrub << "\n\tlife support = " << life_support << "\n"; 
+
 
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
