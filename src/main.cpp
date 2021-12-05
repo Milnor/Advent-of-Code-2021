@@ -200,7 +200,7 @@ class VentMap {
             }
             cout << "[+] Created VentMap.\n";
         }        
-        int drawVents(vector<string> data);        
+        int drawVents(vector<string> data, bool complex);        
         void printVents(void);
         int dangersCount(void);
     private:
@@ -208,7 +208,7 @@ class VentMap {
         int y_max;
         int vents[1000][1000];
         int incrementCoords(int x1, int y1, int x2, int y2); 
-
+        int incrementDiagonals(int x1, int y1, int x2, int y2); 
 };
 
 // Member functions of VentMap
@@ -224,6 +224,7 @@ int VentMap::dangersCount(void) {
     return dangers;
 }
 
+// TODO: fix wonky rotation
 void VentMap::printVents(void) {
     for (int x = 0; x <= x_max; x++) {
         for (int y = 0; y <= y_max; y++) {
@@ -231,6 +232,108 @@ void VentMap::printVents(void) {
         }
         cout << "\n";
     }
+}
+
+int VentMap::incrementDiagonals(int x1, int y1, int x2, int y2) {
+    // only does 45 degree diagonals
+    //int low_x, low_y, hi_x, hi_y, length;
+    //int length = 0;
+    bool x_growing = true;
+    bool y_growing = true;
+
+    if (x2 < x1) {
+        x_growing = false;
+    }
+
+    if (y2 < y1) {
+        y_growing = false;
+    }
+
+    int x = x1;
+    int y = y1;
+    int length;
+    if (x_growing) {
+        length = x2 - x1;
+    } else {
+        length = x1 - x2;
+    }
+
+    for (int i = 0; i <= length; i++) {
+        vents[x][y]++;
+        if (x_growing) {
+            x++;
+        } else {
+            x--;
+        }
+        if (y_growing) {
+            y++;
+        } else {
+            y--;
+        }
+
+    }
+
+
+#if 0
+    if (x_growing) {
+        // x is increasing
+        for (int x = x1; x < x2; x++) {
+            if (y_growing) {
+                // and y is increasing
+                for (int y = y1; y < y2; y++) {
+                    vents[x][y]++;
+                }
+            } else {
+                // and y is decreasing
+                for (int y = y1; y > y2; y--) {
+                    vents[x][y]++;
+                }
+            }
+        }
+    } else {
+        // x is decreasing
+        for (int x = x1; x > x2; x--) {
+            if (y_growing) {
+                // and y is increasing
+
+                for (int y = y1; y < y2; y++) {
+                    vents[x][y]++;
+                }
+            } else {
+                // and y is decreasing
+
+                for (int y = y1; y > y2; y--) {
+                    vents[x][y]++;
+                }
+            }
+        }
+    }
+#endif
+
+#if 0
+    if (x1 < x2) {
+        low_x = x1;
+        hi_x = x2;
+    } else {
+        low_x = x2;
+        hi_x = x1;
+    }
+    if (y1 < y2) {
+        low_y = y1;
+        hi_y = y2;
+    } else {
+        low_y = y2;
+        hi_y = y1;
+    }
+    
+    length = hi_x - low_x;
+
+    for (int i = 0; i < length; i++) {
+        vents[low_x+i][low_y+i]++;
+    }
+#endif
+
+    return 0;
 }
 
 int VentMap::incrementCoords(int x1, int y1, int x2, int y2) {
@@ -267,7 +370,7 @@ int VentMap::incrementCoords(int x1, int y1, int x2, int y2) {
     return 0;
 }
 
-int VentMap::drawVents(vector<string> data) {
+int VentMap::drawVents(vector<string> data, bool complex) {
     /* Will regex save me from all the off-by-one and
         nested loop errors I made on Day 4? */
     unsigned int x1, y1, x2, y2;
@@ -292,7 +395,7 @@ int VentMap::drawVents(vector<string> data) {
         smatch my2;
         regex_search(line, my2, findy2);
 
-        cout << "{" << mx1[1] << "," << my1[1] << "} {" << mx2[1] << "," << my2[1] << "}\n"; 
+        //cout << "{" << mx1[1] << "," << my1[1] << "} {" << mx2[1] << "," << my2[1] << "}\n"; 
 
         // convert to integers
         x1 = stoi(mx1[1], 0, 10);
@@ -303,6 +406,8 @@ int VentMap::drawVents(vector<string> data) {
         // filter out any diagonal lines
         if ((x1 == x2) || (y1 == y2)) {
             incrementCoords(x1, y1, x2, y2);
+        } else if (complex) {
+            incrementDiagonals(x1, y1, x2, y2);
         }
 
     }
@@ -586,10 +691,16 @@ int main() {
     VentMap hydrothermal = VentMap(1000, 1000);
     vector<string> day05 = get_challenge_data("./data/05vents.txt");
     hydrothermal.printVents();
-    hydrothermal.drawVents(day05);
+    hydrothermal.drawVents(day05, false);
     hydrothermal.printVents();
     cout << "Day 5 Part I = " << hydrothermal.dangersCount() << "\n";
 
+    VentMap hydro2 = VentMap(1000, 1000);
+    hydro2.printVents();
+    hydro2.drawVents(day05, true);
+    hydro2.printVents();
+    cout << "Day 5 Part II = " << hydro2.dangersCount() << "\n";
+    cout << "(23024 and 23238 were both too high).\n";
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
     //yellow.y = 0;
