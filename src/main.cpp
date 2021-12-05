@@ -2,35 +2,11 @@
 #include <ctype.h>
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <string>
 #include <vector>
 
 using namespace std;
-
-/* Data Sets
- *
- * https://adventofcode.com/2021/day/1/input
- * https://adventofcode.com/2021/day/2/input
- * https://adventofcode.com/2021/day/3/input
- *
- */
-
-/*
-class Submarine {
-    public:
-        int x;      // horizontal coordinate
-        int y;      // depth coordinate
-        int aim;
-};
-*/
-
-/* Correct answers from Python version:
- *
- * D1P1 = 1482
- * D1P2 = 1518
- * D2P1 = 2199 * 786 = 1728414
- * D2P2 = 2199 * 802965 = 1765720035
- */
 
 const int bit_count = 12;
 
@@ -205,9 +181,48 @@ int calculate_co2(vector<string> data) {
 }
 
 struct game_board {
+    bool has_won;
     int board[5][5];
     bool state[5][5];
 };
+
+class VentMap {
+    public:
+        VentMap(int x, int y) {
+            x_max = x - 1;
+            y_max = y - 1;
+            vents = new int[x * y]();
+            cout << "[+] Created VentMap.\n";
+        }        
+        int drawVents(vector<string> data);        
+
+    private:
+        int x_max;
+        int y_max;
+        int * vents;
+        
+
+};
+
+// Member functions of VentMap
+int VentMap::drawVents(vector<string> data) {
+    /* Will regex save me from all the off-by-one and
+        nested loop errors I made on Day 4? */
+    unsigned int x1, y1, x2, y2;
+    for (auto line : data) {
+        // x1
+
+        // x2
+
+        // y1
+
+        // y2
+    }
+
+    // filter out any diagonal lines
+
+    return 0;
+}
 
 class Bingo {
     public:
@@ -256,8 +271,7 @@ int Bingo::finalScore(game_board board, int pick) {
             }
         }
     }
-
-    cout << "\nunmarked sum = " << sum << "\npick = " << pick << "\n";
+    //cout << "\nunmarked sum = " << sum << "\npick = " << pick << "\n";
 
     return (sum * pick);
 }
@@ -267,9 +281,6 @@ void Bingo::printBoard(game_board board) {
     {
         for (int col = 0; col < 5; col++) {
             cout << "\t" << board.board[row][col];
-            //if (board.state[row][col]) {
-            //    cout << "X";
-            //}
         }
         cout << "\n";
     }
@@ -277,9 +288,6 @@ void Bingo::printBoard(game_board board) {
     {
         for (int col = 0; col < 5; col++) {
             cout << "\t" << board.state[row][col];
-            //if (board.state[row][col]) {
-            //    cout << "X";
-            //}
         }
         cout << "\n";
     }
@@ -287,10 +295,8 @@ void Bingo::printBoard(game_board board) {
 }
 
 bool Bingo::checkWin(game_board board) {
-    //bool result = false;
 
     // check horizontal
-    //int sum = 0;
     for (int row = 0; row < 5; row++) {
         int sum = 0;
         for (int col = 0; col < 5; col++) {
@@ -302,7 +308,6 @@ bool Bingo::checkWin(game_board board) {
             return true;
         }
     }
-    
 
     // check vertical
     for (int col = 0; col < 5; col++) {
@@ -317,30 +322,33 @@ bool Bingo::checkWin(game_board board) {
         }
     }
 
-
     return false;
 }
 
 void Bingo::startGame(void) {
-    bool won = false;
+    //bool won = false;
+    //int first_win = -1;
+    //int last_win = -1;
+    
     for (int round = 0; round < numbers.size(); round++) {
         int pick = numbers[round];
         cout << "==Round #" << round << "== (" << pick << " selected)\n";
         for (auto &current : players) {
             //printBoard(current);
-            cout << "player is checking board\n";
-            for (int row = 0; row < 5; row++) {
-                for (int col = 0; col < 5; col++) {
-                    if (current.board[row][col] == pick) {
-                        cout << "\tsomeone has " << pick << "!\n";
-                        current.state[row][col] = true;
-                        cout << "state " << row << "," << col << "=" << current.state[row][col] << "\n"; 
-                        printBoard(current);
-                        won = checkWin(current);
-                        if (won) {
-                            cout << "\t\tBINGO!! Final Score=" << finalScore(current, pick) << "\n";
-
-                            return;
+            if (!current.has_won) {
+                cout << "player is checking board\n";
+                for (int row = 0; row < 5; row++) {
+                    for (int col = 0; col < 5; col++) {
+                        if (current.board[row][col] == pick) {
+                            cout << "\tsomeone has " << pick << "!\n";
+                            current.state[row][col] = true;
+                            cout << "state " << row << "," << col << "=" << current.state[row][col] << "\n"; 
+                            printBoard(current);
+                            if (checkWin(current)) {
+                                cout << "\t\tBINGO!! Final Score=" << finalScore(current, pick) << "\n";
+                                current.has_won = true;
+                                //return;
+                            }
                         }
                     }
                 }
@@ -418,9 +426,6 @@ vector<game_board> Bingo::parsePlayers(vector<string> data) {
 
     vector<game_board> boards;
 
-    //for (auto number : all_boards)
-    //{
-
     int count = 0;
     do {
         game_board player;
@@ -430,6 +435,7 @@ vector<game_board> Bingo::parsePlayers(vector<string> data) {
             for (int col = 0; col < 5; col++) {
                 player.board[row][col] = all_boards[count];
                 player.state[row][col] = false; 
+                player.has_won = false;
                 count++;
             }
 
@@ -437,10 +443,6 @@ vector<game_board> Bingo::parsePlayers(vector<string> data) {
         boards.push_back(player);
     } while (count < all_boards.size());
 
-    //}
-
-    //game_board dummy;
-    //dummyvec.push_back(dummy);
     return boards;
 }
 
@@ -487,12 +489,17 @@ int main() {
 
     vector<string> bingo = get_challenge_data("./data/04bingo.txt");
     cout << "line 1: " << bingo[0] << "\nline 2: " << bingo[1] << "\nline 3: " << bingo[2] << "\nline 4:" << bingo[3] << "\n";
-
+#if 0
     Bingo game = Bingo(bingo);
     cout << "players = " << game.getPlayers() << "\n";
     cout << "numbers = " << game.getNumbers() << "\n";
     game.startGame();
+#endif
 
+    cout << "+++Day 5+++\n";
+    VentMap hydrothermal = VentMap(10, 10);
+    vector<string> day05 = get_challenge_data("./data/05sample.txt");
+    hydrothermal.drawVents(day05);
 
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
