@@ -206,7 +206,7 @@ class VentMap {
     private:
         int x_max;
         int y_max;
-        int vents[10][10];
+        int vents[1000][1000];
         int incrementCoords(int x1, int y1, int x2, int y2); 
 
 };
@@ -583,8 +583,8 @@ int main() {
 #endif
 
     cout << "+++Day 5+++\n";
-    VentMap hydrothermal = VentMap(10, 10);
-    vector<string> day05 = get_challenge_data("./data/05sample.txt");
+    VentMap hydrothermal = VentMap(1000, 1000);
+    vector<string> day05 = get_challenge_data("./data/05vents.txt");
     hydrothermal.printVents();
     hydrothermal.drawVents(day05);
     hydrothermal.printVents();
