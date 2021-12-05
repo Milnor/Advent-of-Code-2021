@@ -223,6 +223,7 @@ class Bingo {
             players = parsePlayers(subvector);
 
         }
+        void startGame(void);
         int getNumbers(void);
         int getPlayers(void);
     private:
@@ -231,8 +232,9 @@ class Bingo {
         vector<int> parseNumbers(string data);
         vector<int> parseBoards(vector<string> data);
         vector<game_board> parsePlayers(vector<string> data);     
-    
-
+        bool checkWin(game_board board);
+        void printBoard(game_board);
+        int finalScore(game_board board, int pick);
 };
 
 // Member functions of Bingo
@@ -242,6 +244,109 @@ int Bingo::getNumbers(void) {
 
 int Bingo::getPlayers(void) {
     return players.size();
+}
+
+int Bingo::finalScore(game_board board, int pick) {
+
+    int sum = 0;    // unmarked
+    for (int r = 0; r < 5; r++) {
+        for (int c = 0; c < 5; c++) {
+            if (board.state[r][c] == false) {
+                sum += board.board[r][c];
+            }
+        }
+    }
+
+    cout << "\nunmarked sum = " << sum << "\npick = " << pick << "\n";
+
+    return (sum * pick);
+}
+
+void Bingo::printBoard(game_board board) {
+    for (int row = 0; row < 5; row++)
+    {
+        for (int col = 0; col < 5; col++) {
+            cout << "\t" << board.board[row][col];
+            //if (board.state[row][col]) {
+            //    cout << "X";
+            //}
+        }
+        cout << "\n";
+    }
+    for (int row = 0; row < 5; row++)
+    {
+        for (int col = 0; col < 5; col++) {
+            cout << "\t" << board.state[row][col];
+            //if (board.state[row][col]) {
+            //    cout << "X";
+            //}
+        }
+        cout << "\n";
+    }
+    cout << "------------\n\n";
+}
+
+bool Bingo::checkWin(game_board board) {
+    //bool result = false;
+
+    // check horizontal
+    //int sum = 0;
+    for (int row = 0; row < 5; row++) {
+        int sum = 0;
+        for (int col = 0; col < 5; col++) {
+            if (board.state[row][col]) {
+                sum++;
+            }
+        }
+        if (sum == 5) {
+            return true;
+        }
+    }
+    
+
+    // check vertical
+    for (int col = 0; col < 5; col++) {
+        int sum = 0;
+        for (int row = 0; row < 5; row++) {
+            if (board.state[row][col]) {
+                sum++;
+            }
+        }
+        if (sum == 5) {
+            return true;
+        }
+    }
+
+
+    return false;
+}
+
+void Bingo::startGame(void) {
+    bool won = false;
+    for (int round = 0; round < numbers.size(); round++) {
+        int pick = numbers[round];
+        cout << "==Round #" << round << "== (" << pick << " selected)\n";
+        for (auto &current : players) {
+            //printBoard(current);
+            cout << "player is checking board\n";
+            for (int row = 0; row < 5; row++) {
+                for (int col = 0; col < 5; col++) {
+                    if (current.board[row][col] == pick) {
+                        cout << "\tsomeone has " << pick << "!\n";
+                        current.state[row][col] = true;
+                        cout << "state " << row << "," << col << "=" << current.state[row][col] << "\n"; 
+                        printBoard(current);
+                        won = checkWin(current);
+                        if (won) {
+                            cout << "\t\tBINGO!! Final Score=" << finalScore(current, pick) << "\n";
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 vector<int> Bingo::parseNumbers(string data) {
@@ -288,11 +393,11 @@ vector<int> Bingo::parseBoards(vector<string> data) {
 
         }
 
-            if (number.size() > 0) {
-                cout << "\talso pushing " << number << " EOL\n";
-                num_list.push_back(stoi(number, 0, 10));
-                number.clear();
-            }
+        if (number.size() > 0) {
+            cout << "\talso pushing " << number << " EOL\n";
+            num_list.push_back(stoi(number, 0, 10));
+            number.clear();
+        }
     }
         if (number.size() > 0) {
             cout << "\talso pushing " << number << "\n";
@@ -310,10 +415,33 @@ vector<game_board> Bingo::parsePlayers(vector<string> data) {
     {
         cerr << "[!]" << all_boards.size() << "won't fit 5x5 boards evenly!\n";
     }
-    game_board dummy;
-    vector<game_board> dummyvec;
-    dummyvec.push_back(dummy);
-    return dummyvec;
+
+    vector<game_board> boards;
+
+    //for (auto number : all_boards)
+    //{
+
+    int count = 0;
+    do {
+        game_board player;
+
+        for (int row = 0; row < 5; row++) {
+
+            for (int col = 0; col < 5; col++) {
+                player.board[row][col] = all_boards[count];
+                player.state[row][col] = false; 
+                count++;
+            }
+
+        }    
+        boards.push_back(player);
+    } while (count < all_boards.size());
+
+    //}
+
+    //game_board dummy;
+    //dummyvec.push_back(dummy);
+    return boards;
 }
 
 int main() {
@@ -357,12 +485,15 @@ int main() {
     cout << "\toxygen = " << oxygen_gen << "\n\tCO2 = " << co2_scrub << "\n\tlife support = " << life_support << "\n"; 
 
 
-    vector<string> bingo = get_challenge_data("./data/04sample.txt");
+    vector<string> bingo = get_challenge_data("./data/04bingo.txt");
     cout << "line 1: " << bingo[0] << "\nline 2: " << bingo[1] << "\nline 3: " << bingo[2] << "\nline 4:" << bingo[3] << "\n";
 
     Bingo game = Bingo(bingo);
     cout << "players = " << game.getPlayers() << "\n";
     cout << "numbers = " << game.getNumbers() << "\n";
+    game.startGame();
+
+
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
     //yellow.y = 0;
