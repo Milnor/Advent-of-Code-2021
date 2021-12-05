@@ -191,20 +191,82 @@ class VentMap {
         VentMap(int x, int y) {
             x_max = x - 1;
             y_max = y - 1;
-            vents = new int[x * y]();
+            //vents = new int[x][y]();
+            //vents = {};
+            for (int i = 0; i <= x_max; i++) {
+                for (int j = 0; j <= y_max; j++) {
+                    vents[i][j] = 0;
+                }
+            }
             cout << "[+] Created VentMap.\n";
         }        
         int drawVents(vector<string> data);        
-
+        void printVents(void);
+        int dangersCount(void);
     private:
         int x_max;
         int y_max;
-        int * vents;
-        
+        int vents[10][10];
+        int incrementCoords(int x1, int y1, int x2, int y2); 
 
 };
 
 // Member functions of VentMap
+int VentMap::dangersCount(void) {
+    int dangers = 0;
+    for (int i = 0; i <= x_max; i++) {
+        for (int j = 0; j <= y_max; j++) {
+            if (vents[i][j] >= 2) {
+                dangers++;
+            }
+        }
+    }
+    return dangers;
+}
+
+void VentMap::printVents(void) {
+    for (int x = 0; x <= x_max; x++) {
+        for (int y = 0; y <= y_max; y++) {
+            cout << vents[x][y] << " ";
+        }
+        cout << "\n";
+    }
+}
+
+int VentMap::incrementCoords(int x1, int y1, int x2, int y2) {
+
+    if (x1 == x2) {
+        // plot vertical line
+        int lo_y, hi_y;
+        if (y1 < y2) {
+            lo_y = y1;
+            hi_y = y2;
+        } else {
+            lo_y = y2;
+            hi_y = y1;
+        }
+        for (int curr_y = lo_y; curr_y <= hi_y; curr_y++) {
+            vents[x1][curr_y]++;
+        } 
+    } else if (y1 == y2) {
+        // plot horizontal line
+        int lo_x, hi_x;
+        if (x1 < x2) {
+            lo_x = x1;
+            hi_x = x2;
+        } else {
+            lo_x = x2;
+            hi_x = x1;
+        }
+        for (int curr_x = lo_x; curr_x <= hi_x; curr_x++) {
+            vents[curr_x][y1]++;
+        }
+
+    }
+
+    return 0;
+}
+
 int VentMap::drawVents(vector<string> data) {
     /* Will regex save me from all the off-by-one and
         nested loop errors I made on Day 4? */
@@ -231,9 +293,19 @@ int VentMap::drawVents(vector<string> data) {
         regex_search(line, my2, findy2);
 
         cout << "{" << mx1[1] << "," << my1[1] << "} {" << mx2[1] << "," << my2[1] << "}\n"; 
-    }
 
-    // filter out any diagonal lines
+        // convert to integers
+        x1 = stoi(mx1[1], 0, 10);
+        y1 = stoi(my1[1], 0, 10);
+        x2 = stoi(mx2[1], 0, 10);
+        y2 = stoi(my2[1], 0, 10);
+
+        // filter out any diagonal lines
+        if ((x1 == x2) || (y1 == y2)) {
+            incrementCoords(x1, y1, x2, y2);
+        }
+
+    }
 
     return 0;
 }
@@ -513,7 +585,10 @@ int main() {
     cout << "+++Day 5+++\n";
     VentMap hydrothermal = VentMap(10, 10);
     vector<string> day05 = get_challenge_data("./data/05sample.txt");
+    hydrothermal.printVents();
     hydrothermal.drawVents(day05);
+    hydrothermal.printVents();
+    cout << "Day 5 Part I = " << hydrothermal.dangersCount() << "\n";
 
     Submarine yellow{};   // obvious Beatles pun
     //yellow.x = 0;       // move to constructor (after I learn how)!
