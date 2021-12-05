@@ -211,12 +211,26 @@ int VentMap::drawVents(vector<string> data) {
     unsigned int x1, y1, x2, y2;
     for (auto line : data) {
         // x1
-
-        // x2
-
+        regex findx1("^([0-9]+),");
+        smatch mx1;
+        regex_search(line, mx1, findx1);
+        
         // y1
-
+        regex findy1(",([0-9]+) ->");
+        smatch my1;
+        regex_search(line, my1, findy1);
+        
+        // x2
+        regex findx2("-> ([0-9]+),");
+        smatch mx2;
+        regex_search(line, mx2, findx2);
+        
         // y2
+        regex findy2(",([0-9]+)$");
+        smatch my2;
+        regex_search(line, my2, findy2);
+
+        cout << "{" << mx1[1] << "," << my1[1] << "} {" << mx2[1] << "," << my2[1] << "}\n"; 
     }
 
     // filter out any diagonal lines
