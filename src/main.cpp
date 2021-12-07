@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <cstdio>
 #include <ctype.h>
 #include <fstream>
@@ -637,6 +638,63 @@ vector<game_board> Bingo::parsePlayers(vector<string> data) {
     return boards;
 }
 
+class Lanternfish {
+    public:
+        Lanternfish(vector<string> initial);
+        void showState();
+        void dayForward();
+        void fastForward(int days);
+        uint64_t getCount(void);
+    private:
+        vector<uint8_t> school;
+};
+
+Lanternfish::Lanternfish(vector<string> initial) {
+    string s = initial[0];
+    for (auto c : s) {
+        string number = "";
+        if (isdigit(c)) {
+            number.append(1, c);
+            school.push_back(stoi(number, 0, 10));
+        }
+    }
+}
+
+void Lanternfish::dayForward() {
+    vector<uint8_t> fry = {};
+    for (auto &fish : school) {
+
+        if (fish == 0) {
+            fry.push_back(8);
+            fish = 6;
+        } else {
+            fish--;
+        }
+
+    }
+    for (auto baby : fry) {
+        school.push_back(baby);
+    }
+}
+
+uint64_t Lanternfish::getCount() {
+    return school.size();
+}
+
+void Lanternfish::fastForward(int days) {
+    for (int i = 0; i < days; i++) {
+        cout << "\tDay #" << i << "/tcount=" << school.size() << "\n";
+        dayForward();
+    }
+}
+
+void Lanternfish::showState() {
+    for (auto fish : school) {
+        cout << fish << " ";
+    }
+    cout << "\n";
+}
+
 int main() {
 
     fstream challenge;
@@ -687,6 +745,7 @@ int main() {
     game.startGame();
 #endif
 
+#if 0
     cout << "+++Day 5+++\n";
     VentMap hydrothermal = VentMap(1000, 1000);
     vector<string> day05 = get_challenge_data("./data/05vents.txt");
@@ -705,9 +764,17 @@ int main() {
     //yellow.x = 0;       // move to constructor (after I learn how)!
     //yellow.y = 0;
     //yellow.aim = 0;
+#endif
 
-    cout << "x=" << yellow.x << "\n";
-    cout << "y=" << yellow.y << "\n";
+    cout << "+++Day 6+++\n";
+    Lanternfish spooky = Lanternfish(get_challenge_data("./data/06fish.txt"));
+    spooky.showState();
+    spooky.fastForward(150);
+    uint64_t result = spooky.getCount();
+    cout << "After 150 days there are " << result << " fish\n."; 
+
+    //cout << "x=" << yellow.x << "\n";
+    //cout << "y=" << yellow.y << "\n";
 
 
     return 0;
