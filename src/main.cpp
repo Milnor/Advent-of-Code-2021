@@ -788,6 +788,79 @@ void Lanternfish::showState() {
 #endif 
 
 
+vector<int> strVecToIntVec(vector<string> input) {
+    vector<int> output = {};
+    for (auto line : input) {
+        cout << "line = " << line << "\n";
+        string number = "";
+        for (auto digit : line) {
+            //string number = "";
+            cout << "[ ] digit = " << digit << "\n";
+            if (isdigit(digit)) {
+                number.push_back(digit);
+
+                cout << "[?] " << number << "\n";
+            } else {
+                if (number.size() > 0) {
+                    output.push_back(stoi(number, 0, 10));
+                    cout << "[!] added " << number << "\n";
+                    number.clear();
+                }
+            }
+        }
+        
+    if (number.size() > 0) {
+        output.push_back(stoi(number, 0, 10));
+    }
+    }
+    return output;
+}
+
+    //int fuel_cost = fuel_economy(crabs);
+int fuel_economy(vector<int> crabs, bool expensive) {
+    int horizontal_max = 0, fuel_cost = 0, best_position = 0;
+    
+    for (auto crab : crabs) {
+        if (crab > horizontal_max) {
+            horizontal_max = crab;
+        }
+    }
+
+    cout << "horizontal max = " << horizontal_max << "\n";
+
+    fuel_cost = INT32_MAX;
+    for (int i = 0; i <= horizontal_max; i++) {
+        cout << "[!] trying pos i = " << i << "\n";
+        // try every possible horizontal position
+        int test_cost = 0;
+        for (auto crab : crabs) {
+            int hi, low;
+            if (crab > i) {
+                hi = crab;
+                low = i;
+            } else {
+                hi = i;
+                low = crab;
+            }
+            int distance = (hi - low);
+            test_cost += distance;
+            if (expensive && (distance > 1)) {
+                // i.e. Day 7 Part 2 instead of Part 1
+                for (int j = (distance - 1); j > 0; j--) {
+                    test_cost += j;
+                }
+            }
+        }
+        if (test_cost < fuel_cost) {
+            cout << "[!] found better position at " << i << "\n";
+            fuel_cost = test_cost;
+        }
+
+    }
+
+    return fuel_cost;
+}
+
 int main() {
 
     fstream challenge;
@@ -864,11 +937,22 @@ int main() {
     //spooky.showState();
     spooky.fastForward(256);
     uint64_t result = spooky.getCount();
-    cout << "After 256 days there are " << result << " fish\n."; 
+    cout << "After 256 days there are " << result << " fish.\n"; 
 
+    cout << "+++Day 7+++\n";
+    vector<int> crabs = strVecToIntVec(get_challenge_data("./data/07crabs.txt"));
+    cout << "There are " << crabs.size() << " crabs.\n";
+    //for (auto crab : crabs) {
+    //    cout << crab << "\n";
+    //}
+
+    int fuel_cost = fuel_economy(crabs, false);
+    int fuel_cost2 = fuel_economy(crabs, true);
+    cout << "[+] best fuel cost is " << fuel_cost << " (cheaper fuel)\n";
+    cout << "[+] best fuel cost is " << fuel_cost2 << " (expensive fuel)\n";
     //cout << "x=" << yellow.x << "\n";
     //cout << "y=" << yellow.y << "\n";
 
-
     return 0;
 }
+
