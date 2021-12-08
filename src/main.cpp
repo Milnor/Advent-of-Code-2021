@@ -88,8 +88,26 @@ int fuel_economy(vector<int> crabs, bool expensive) {
     return fuel_cost;
 }
 
+struct display {
+
+    string in01, in02, in03, in04, in05, in06, in07, in08, in09, in10;
+    string out01, out02, out03, out04;
+
+};
+
+vector<display> parseDisplays(vector<string> data) {
+    vector<display> parsed = {};
+    for (auto line : data) {
+        cout << "[!] = " << line << "\n";
+    }
+
+    return parsed;
+}
+
 int main() {
 
+
+#if 0
     fstream challenge;
     challenge.open("./data/01depth.txt", ios::in);
     int * depths;
@@ -110,7 +128,7 @@ int main() {
         }
     }
     challenge.close();
-
+#endif
 #if 0
     cout << "Day 1 Challenge 1=" << count << "\n";
 
@@ -149,6 +167,10 @@ int main() {
     cout << "[+] best fuel cost is " << fuel_cost << " (cheaper fuel)\n";
     cout << "[+] best fuel cost is " << fuel_cost2 << " (expensive fuel)\n";
 #endif
+
+    cout << "+++Day 8+++\n";
+    vector<display> displays = parseDisplays(get_challenge_data("./data/08sample.txt"));
+
     return 0;
 }
 

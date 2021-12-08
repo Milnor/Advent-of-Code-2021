@@ -1,3 +1,4 @@
+#if 0
 #include <cstdint>
 #include <cstdio>
 #include <ctype.h>
@@ -6,6 +7,9 @@
 #include <regex>
 #include <string>
 #include <vector>
+#endif
+
+#include <Submarine.h>
 
 using namespace std;
 

@@ -3,3 +3,5 @@ project(AoC2021)
 
 add_executable(advent   src/main.cpp
                         src/Submarine.cpp)
+
+target_include_directories(advent PUBLIC include/)
