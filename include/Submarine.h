@@ -26,9 +26,9 @@ Uniques:
 
 4   bcdf        (4)
 
-7   acf         (3)
+7   acf         (3) whichever 1 lacks is the true a
 
-8   abcdefg     (7)
+8   abcdefg     (7) 
 
 Non-Uniques:
 ------------
