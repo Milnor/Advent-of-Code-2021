@@ -1,4 +1,15 @@
-#include <Submarine.h>
+//#include <Submarine.h>
+
+#include <cstdint>
+#include <cstdio>
+//#include <cstring>
+#include <ctype.h>
+#include <fstream>
+#include <iostream>
+#include <regex>
+#include <string>
+#include <vector>
+
 
 using namespace std;
 
@@ -98,10 +109,73 @@ struct display {
 vector<display> parseDisplays(vector<string> data) {
     vector<display> parsed = {};
     for (auto line : data) {
+        display next_set;
+        string intermediate[15];
+        int i = 0;
         cout << "[!] = " << line << "\n";
+        string delimiter = " ";
+        // adapted from: https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+        size_t pos = 0;
+        string token;
+        while ((pos = line.find(delimiter)) != string::npos) {
+            token = line.substr(0, pos);
+            cout << token << endl;
+            line.erase(0, pos + delimiter.length());
+            intermediate[i] = token;
+            i++;
+        }
+        intermediate[14] = line;
+        next_set.in01 = intermediate[0];
+        next_set.in02 = intermediate[1];
+        next_set.in03 = intermediate[2];
+        next_set.in04 = intermediate[3];
+        next_set.in05 = intermediate[4];
+        next_set.in06 = intermediate[5];
+        next_set.in07 = intermediate[6];
+        next_set.in08 = intermediate[7];
+        next_set.in09 = intermediate[8];
+        next_set.in10 = intermediate[9];
+        next_set.out01 = intermediate[11];
+        next_set.out02 = intermediate[12];
+        next_set.out03 = intermediate[13];
+        next_set.out04 = intermediate[14];
+        cout << "current = " << next_set.in01 << "," << next_set.in02 << "\n";
+        cout << "dumping the " << intermediate[10] << "\n";
+        parsed.push_back(next_set);
     }
 
     return parsed;
+}
+
+// 2, 4, 3, 7 are the output string lengths of 1, 4, 7, 8
+
+int countEasyDigits(vector<display> displays) {
+    int count = 0;
+    for (auto d : displays) {
+        int aa = d.out01.length();
+        int bb = d.out02.length();
+        int cc = d.out03.length();
+        int dd = d.out04.length();
+        if (aa == 2 || aa == 4 || aa == 3 || aa == 7) {
+            count++;
+        }
+        if (bb == 2 || bb == 4 || bb == 3 || bb == 7) {
+            count++;
+        }
+        if (cc == 2 || cc == 4 || cc == 3 || cc == 7) {
+            count++;
+        }
+        if (dd == 2 || dd == 4 || dd == 3 || dd == 7) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void printOutputs(vector<display> displays) {
+    for (auto d : displays) {
+        cout << d.out01 << " " << d.out02 << " " << d.out03 << " " << d.out04 << "\n"; 
+    }
 }
 
 int main() {
@@ -169,8 +243,15 @@ int main() {
 #endif
 
     cout << "+++Day 8+++\n";
-    vector<display> displays = parseDisplays(get_challenge_data("./data/08sample.txt"));
+    vector<display> displays = parseDisplays(get_challenge_data("./data/08displays.txt"));
+    cout << "items in displays = " << displays.size() << "\n";
+    cout << "displays[0].out04 = " << displays[0].out04 << "\n";
 
+    cout << "displays[0].in01 = " << displays[0].in01 << "\n";
+    int part1_result = countEasyDigits(displays);
+    cout << "==============\n";
+    printOutputs(displays);
+    cout << "Part 1 Sum = " << part1_result << "\n";
     return 0;
 }
 
