@@ -1,4 +1,4 @@
-//#include <Submarine.h>
+#include "AoC2021/Submarine.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -178,8 +178,30 @@ void printOutputs(vector<display> displays) {
     }
 }
 
+struct result {
+    long long part1;
+    long long part2;
+};
+
+int do_challenge(string sample_data, string actual_data, string challenge, result (*solver)(string)) {
+    result sample = solver(sample_data, solver);
+    result actual = solver(actual_data, solver);
+}
+
+result day01(string data, result (*solver)(string)) {
+    result answer = { 500, 200};
+    return result;
+}
+
+result day02(string data, result (*solver)(string)) {
+    result answer = { 400, 300};
+    return result;
+}
 int main() {
 
+    do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", &day01);
+
+    do_challenge("./data/02sample.txt", "./data/02movement.txt", "Dive!", &day02);
 
 #if 0
     fstream challenge;
@@ -241,7 +263,7 @@ int main() {
     cout << "[+] best fuel cost is " << fuel_cost << " (cheaper fuel)\n";
     cout << "[+] best fuel cost is " << fuel_cost2 << " (expensive fuel)\n";
 #endif
-
+#if 0
     cout << "+++Day 8+++\n";
     vector<display> displays = parseDisplays(get_challenge_data("./data/08displays.txt"));
     cout << "items in displays = " << displays.size() << "\n";
@@ -252,6 +274,7 @@ int main() {
     cout << "==============\n";
     printOutputs(displays);
     cout << "Part 1 Sum = " << part1_result << "\n";
+#endif
     return 0;
 }
 

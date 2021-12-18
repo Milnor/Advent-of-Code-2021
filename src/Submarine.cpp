@@ -9,7 +9,7 @@
 #include <vector>
 #endif
 
-#include <Submarine.h>
+#include "../include/AoC2021/Submarine.hpp"
 
 using namespace std;
 

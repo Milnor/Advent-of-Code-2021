@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "THIS CAN'T BE AUTOMATED (PROBABLY)"
+exit 1
+
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <day #>"
     exit
