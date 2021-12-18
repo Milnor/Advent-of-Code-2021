@@ -10,12 +10,27 @@
 #include <string>
 #include <vector>
 
-
 using namespace std;
 
+/* Linux terminal color codes */
+const string RESET = "\033[0m";
+const string BOLDYELLOW = "\033[1m\033[33m";
+const string CYAN = "\033[36m";
+const string MAGENTA = "\033[35m";
+const string GREEN = "\033[32m";
+
+/* Working assumption: all valid answers are positive integers */
+const int INVALID = -1;
+
+// TODO: command line argument to disable
+bool verbose = true;    
+
+// Generic help functions
 vector<string> get_challenge_data(string filepath) {
     vector <string> daily_input;
-    cout << "reading " << filepath << "...\n";
+    if (verbose) {
+        cout << GREEN << "\t[!] reading " << filepath << "...\n" << RESET;
+    }
     fstream challenge;
     challenge.open(filepath, ios::in);
     string current_line;
@@ -55,6 +70,8 @@ vector<int> strVecToIntVec(vector<string> input) {
     return output;
 }
 
+
+// TODO: relocate stuff for specific challenges
 int fuel_economy(vector<int> crabs, bool expensive) {
     int horizontal_max = 0, fuel_cost = 0, best_position = 0;
     
@@ -183,48 +200,74 @@ struct result {
     long long part2;
 };
 
-int do_challenge(string sample_data, string actual_data, string challenge, result (*solver)(string)) {
-    result sample = solver(sample_data, solver);
-    result actual = solver(actual_data, solver);
+int do_challenge(string sample_data, string actual_data, string challenge, result (solver)(string path)) {
+    // TODO: insert Day #
+    cout << BOLDYELLOW << "--- Day ##" << ": " << challenge << " ---\n" << RESET;  
+    int ret = 0;
+    // TODO: handle errors
+    result sample = solver(sample_data);
+    cout << MAGENTA << "\t[+] Sample Data: Part 1=" << sample.part1 << ", Part2=" << sample.part2 << "\n" 
+        << RESET;
+    
+    result actual = solver(actual_data);
+    cout << CYAN << "\t[+] Actual Data: Part 1=" << actual.part1 << ", Part2=" << actual.part2 << "\n"
+        << RESET;
+    
+    return ret;
 }
 
-result day01(string data, result (*solver)(string)) {
-    result answer = { 500, 200};
-    return result;
+result day01(string data) {
+
+    result answer = { INVALID, INVALID };
+   
+    // Format data for analysis 
+    vector<string> raw = get_challenge_data(data);
+    vector<int> depths;
+    for (auto line : raw) {
+        depths.push_back(stoi(line));
+    }
+
+    // Calculate simple increases
+    int increases = 0;
+    int previous = depths[0];
+    for (auto measurement : depths) {
+        if (measurement > previous) {
+            increases++;
+        } 
+        previous = measurement;
+    }
+    answer.part1 = increases;
+
+    // Calculate sliding window increases
+    vector<int> windows;
+    for (int i = 0; i < depths.size() - 2; i++) {
+        windows.push_back(depths[i] + depths[i + 1] + depths[i + 2]);    
+    }
+    increases = 0;
+    previous = windows[0];
+    for (auto window : windows) {
+        if (window > previous) {
+            increases++;
+        }
+        previous = window;
+    }
+    answer.part2 = increases;
+
+    return answer;
 }
 
-result day02(string data, result (*solver)(string)) {
-    result answer = { 400, 300};
-    return result;
+result day02(string data) {
+    result answer = { INVALID, INVALID };
+    return answer;
 }
 int main() {
 
-    do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", &day01);
+    int failed = 0;
 
-    do_challenge("./data/02sample.txt", "./data/02movement.txt", "Dive!", &day02);
+    failed |= do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", day01);
 
-#if 0
-    fstream challenge;
-    challenge.open("./data/01depth.txt", ios::in);
-    int * depths;
-    depths = new int [2000];
-    int i = 0;
-    int count = 0;
-    string current_data;
-    while(getline(challenge, current_data)) {
-        //cout << current_data << "\n";
-        depths[i] = stoi(current_data);
-        i++;
-    }
-    for (i = 1; i < 2000; i++)
-    {
-        if (depths[i] > depths[i - 1])
-        {
-            count++;
-        }
-    }
-    challenge.close();
-#endif
+    failed |= do_challenge("./data/02sample.txt", "./data/02movement.txt", "Dive!", day02);
+
 #if 0
     cout << "Day 1 Challenge 1=" << count << "\n";
 
@@ -275,6 +318,7 @@ int main() {
     printOutputs(displays);
     cout << "Part 1 Sum = " << part1_result << "\n";
 #endif
-    return 0;
+
+    return failed;
 }
 
