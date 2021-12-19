@@ -19,6 +19,8 @@ using namespace std;
 #define MAGENTA     "\033[35m"
 #define GREEN       "\033[32m"
 
+int daynum = 1;
+
 /* Working assumption: all valid answers are positive integers */
 const int INVALID = -1;
 
@@ -201,8 +203,8 @@ struct result {
 };
 
 int do_challenge(string sample_data, string actual_data, string challenge, result (solver)(string path)) {
-    // TODO(milnor): insert Day #
-    cout << BOLDYELLOW << "--- Day ##" << ": " << challenge << " ---\n" << RESET;  
+
+    cout << BOLDYELLOW << "--- Day " << daynum << ": " << challenge << " ---\n" << RESET;  
     int ret = 0;
     // TODO(milnor): handle errors
     result sample = solver(sample_data);
@@ -213,6 +215,8 @@ int do_challenge(string sample_data, string actual_data, string challenge, resul
     cout << CYAN << "\t[+] Actual Data: Part 1=" << actual.part1 << ", Part 2=" << actual.part2 << "\n"
         << RESET;
     
+    daynum++;
+
     return ret;
 }
 
