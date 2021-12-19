@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
-project(AoC2021 C CXX)
+project(AoC2021 CXX)
 
-#[==[
-include_directories("${CMAKE_SOURCE_DIR}/include" 
-	"${CMAKE_SOURCE_DIR}/src")
-#]==]
+set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*")
 
 add_executable(advent   src/main.cpp)
 #                        src/Submarine.cpp)

@@ -1,9 +1,8 @@
 #include "AoC2021/Submarine.hpp"
 
+#include <cctype>
 #include <cstdint>
 #include <cstdio>
-//#include <cstring>
-#include <ctype.h>
 #include <fstream>
 #include <iostream>
 #include <regex>
@@ -13,17 +12,17 @@
 using namespace std;
 
 /* Linux terminal color codes */
-const string RESET = "\033[0m";
-const string BOLDYELLOW = "\033[1m\033[33m";
-const string BOLDRED = "\033[1m\033[31m";
-const string CYAN = "\033[36m";
-const string MAGENTA = "\033[35m";
-const string GREEN = "\033[32m";
+#define RESET       "\033[0m"
+#define BOLDYELLOW  "\033[1m\033[33m"
+#define BOLDRED     "\033[1m\033[31m"
+#define CYAN        "\033[36m"
+#define MAGENTA     "\033[35m"
+#define GREEN       "\033[32m"
 
 /* Working assumption: all valid answers are positive integers */
 const int INVALID = -1;
 
-// TODO: command line argument to disable
+// TODO(milnor): command line argument to disable
 bool verbose = true;    
 
 // Generic help functions
@@ -72,7 +71,7 @@ vector<int> strVecToIntVec(vector<string> input) {
 }
 
 
-// TODO: relocate stuff for specific challenges
+// TODO(milnor): relocate stuff for specific challenges
 int fuel_economy(vector<int> crabs, bool expensive) {
     int horizontal_max = 0, fuel_cost = 0, best_position = 0;
     
@@ -202,10 +201,10 @@ struct result {
 };
 
 int do_challenge(string sample_data, string actual_data, string challenge, result (solver)(string path)) {
-    // TODO: insert Day #
+    // TODO(milnor): insert Day #
     cout << BOLDYELLOW << "--- Day ##" << ": " << challenge << " ---\n" << RESET;  
     int ret = 0;
-    // TODO: handle errors
+    // TODO(milnor): handle errors
     result sample = solver(sample_data);
     cout << MAGENTA << "\t[+] Sample Data: Part 1=" << sample.part1 << ", Part 2=" << sample.part2 << "\n" 
         << RESET;
@@ -318,17 +317,9 @@ result day02(string data) {
     return answer;
 }
 
-int main() {
-
-    int failed = 0;
-
-    failed |= do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", day01);
-
-    failed |= do_challenge("./data/02sample.txt", "./data/02movement.txt", "Dive!", day02);
-
+result day03(string data) {
+    result answer = { INVALID, INVALID };
 #if 0
-    cout << "Day 1 Challenge 1=" << count << "\n";
-
     vector<string> day03 = get_challenge_data("./data/03binary.txt");
     string gamma = calculate_gamma(day03);
     string epsilon = gamma_to_epsilon(gamma);
@@ -343,8 +334,23 @@ int main() {
     int life_support = oxygen_gen * co2_scrub;
 
     cout << "\toxygen = " << oxygen_gen << "\n\tCO2 = " << co2_scrub << "\n\tlife support = " << life_support << "\n"; 
+#endif
+
+    return answer;
+}
+
+int main() {
+
+    int failed = 0;
+
+    failed |= do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", day01);
+
+    failed |= do_challenge("./data/02sample.txt", "./data/02movement.txt", "Dive!", day02);
+
+    failed |= do_challenge("./data/03.sample.txt", "./data/03binary.txt", "Binary Diagnostic", day03);
 
 
+#if 0
     vector<string> bingo = get_challenge_data("./data/04bingo.txt");
     cout << "line 1: " << bingo[0] << "\nline 2: " << bingo[1] << "\nline 3: " << bingo[2] << "\nline 4:" << bingo[3] << "\n";
 
