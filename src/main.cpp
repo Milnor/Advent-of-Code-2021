@@ -15,6 +15,7 @@ using namespace std;
 /* Linux terminal color codes */
 const string RESET = "\033[0m";
 const string BOLDYELLOW = "\033[1m\033[33m";
+const string BOLDRED = "\033[1m\033[31m";
 const string CYAN = "\033[36m";
 const string MAGENTA = "\033[35m";
 const string GREEN = "\033[32m";
@@ -206,11 +207,11 @@ int do_challenge(string sample_data, string actual_data, string challenge, resul
     int ret = 0;
     // TODO: handle errors
     result sample = solver(sample_data);
-    cout << MAGENTA << "\t[+] Sample Data: Part 1=" << sample.part1 << ", Part2=" << sample.part2 << "\n" 
+    cout << MAGENTA << "\t[+] Sample Data: Part 1=" << sample.part1 << ", Part 2=" << sample.part2 << "\n" 
         << RESET;
     
     result actual = solver(actual_data);
-    cout << CYAN << "\t[+] Actual Data: Part 1=" << actual.part1 << ", Part2=" << actual.part2 << "\n"
+    cout << CYAN << "\t[+] Actual Data: Part 1=" << actual.part1 << ", Part 2=" << actual.part2 << "\n"
         << RESET;
     
     return ret;
@@ -258,8 +259,65 @@ result day01(string data) {
 
 result day02(string data) {
     result answer = { INVALID, INVALID };
+
+    vector<string> directions = get_challenge_data(data);
+    int x = 0;
+    int y = 0;
+    for (auto command : directions) {
+        int index = command.size() - 1;
+        string number = string(1, command[index]);
+        int magnitude = stoi(number);
+        switch (command[0]) {
+            case 'f':
+                // forward => increase horizontal
+                x += magnitude;         
+                break;
+            case 'd':
+                // down => increase depth (vertical)
+                y += magnitude;
+                break;
+            case 'u':
+                // up => decrease depth (vertical)
+                y -= magnitude;
+                break;
+            default:
+                cerr << BOLDRED << "\t[-] Unknown command: " << command << "\n" << RESET;
+        }
+    }
+
+    answer.part1 = x * y;
+
+    int aim = 0;    
+    x = 0;
+    y = 0;
+    for (auto command : directions) {
+        int index = command.size() - 1;
+        string number = string(1, command[index]);
+        int magnitude = stoi(number);
+        switch (command[0]) {
+            case 'f':
+                // forward => increase horizontal
+                x += magnitude; 
+                y += (aim * magnitude);        
+                break;
+            case 'd':
+                // down => increase aim
+                aim += magnitude;
+                break;
+            case 'u':
+                // up => decrease aim
+                aim -= magnitude;
+                break;
+            default:
+                cerr << BOLDRED << "\t[-] Unknown command: " << command << "\n" << RESET;
+        }
+    }
+
+    answer.part2 = x * y;
+
     return answer;
 }
+
 int main() {
 
     int failed = 0;
