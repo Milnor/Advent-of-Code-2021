@@ -7,3 +7,8 @@
 * Wean myself off of Python and (re)learn **C++**
 
 Note to self: Don't push until leaderboard for challenge is full.
+
+## Outcomes
+* I failed to save **Christmas 2021** 🦑
+    - on December 25, I had only completed challenges through the first half of Day 8 (Seven Segment Search)
+    - this broken commit (c5c861d) was tagged as v0.1
