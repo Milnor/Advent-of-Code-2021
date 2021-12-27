@@ -1,4 +1,3 @@
-#if 0
 #include <cstdint>
 #include <cstdio>
 #include <ctype.h>
@@ -7,7 +6,6 @@
 #include <regex>
 #include <string>
 #include <vector>
-#endif
 
 #include "../include/AoC2021/Submarine.hpp"
 
@@ -864,7 +862,7 @@ int fuel_economy(vector<int> crabs, bool expensive) {
 
     return fuel_cost;
 }
-
+#if 0
 int main() {
 
     fstream challenge;
@@ -908,6 +906,8 @@ int main() {
 
     vector<string> bingo = get_challenge_data("./data/04bingo.txt");
     cout << "line 1: " << bingo[0] << "\nline 2: " << bingo[1] << "\nline 3: " << bingo[2] << "\nline 4:" << bingo[3] << "\n";
+#endif
+
 #if 0
     Bingo game = Bingo(bingo);
     cout << "players = " << game.getPlayers() << "\n";
@@ -935,7 +935,7 @@ int main() {
     //yellow.y = 0;
     //yellow.aim = 0;
 #endif
-
+#if 0
     cout << "+++Day 6+++\n";
     Lanternfish spooky = Lanternfish(get_challenge_data("./data/06fish.txt"));
     //spooky.showState();
@@ -959,4 +959,5 @@ int main() {
 
     return 0;
 }
+#endif
 
