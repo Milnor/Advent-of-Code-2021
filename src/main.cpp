@@ -6,9 +6,6 @@ using namespace std;
 
 int daynum = 1;
 
-/* Working assumption: all valid answers are positive integers */
-const int INVALID = -1;
-
 // TODO(milnor): command line argument to disable
 bool verbose = true;    
 
@@ -34,7 +31,7 @@ int main() {
 
     int failed = 0;
 
-    failed |= do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", &day01);
+    failed |= do_challenge("./data/01sample.txt", "./data/01depth.txt", "Sonar Sweep", day01);
     failed |= do_challenge("./data/02sample.txt", "./data/02movement.txt", "Dive!", day02);
     failed |= do_challenge("./data/03.sample.txt", "./data/03binary.txt", "Binary Diagnostic", day03);
 
